@@ -1,0 +1,6 @@
+{
+    "title": "Songless Solver",
+    "description": "A browser extension that attempts to solve songs in the Songless game. It requires user-provided ACRCloud API keys to function. Built with JavaScript, HTML, and CSS.",
+    "image": "songless-solver.png",
+    "url": "https://github.com/ASHRREAL/songless-solver"
+}

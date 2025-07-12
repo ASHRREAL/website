@@ -1,0 +1,6 @@
+{
+    "title": "DisCloud",
+    "description": "A Python-based cloud storage application that leverages Discord as a platform to store, manage, and retrieve files. Using the Discord API, the application uploads files in chunks to a designated Discord channel and retrieves them when needed.",
+    "image": "discloud.png",
+    "url": "https://github.com/ASHRREAL/DisCloud"
+}

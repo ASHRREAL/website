@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASH.EXE</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div id="terminal">
+        <div id="output"></div>
+        <div class="input-line">
+            <span class="prompt">>&nbsp;</span>
+            <input type="text" id="command-input" autofocus>
+        </div>
+    </div>
+
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal" class="close-button">&times;</span>
+            <h2 id="modal-title"></h2>
+            <img id="modal-image" src="" alt="Project Image">
+            <p id="modal-description"></p>
+            <a id="modal-link" href="#" target="_blank" class="modal-project-link">View Project</a>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

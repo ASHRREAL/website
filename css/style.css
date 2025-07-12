@@ -1,0 +1,170 @@
+:root {
+    --background: #0c0c0c;
+    --foreground: #00ff41;
+    --shadow: rgba(0, 255, 65, 0.7);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    text-shadow: 0 0 5px var(--shadow);
+    margin: 0;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.3) 3px,
+        rgba(0,0,0,0.3) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+}
+
+#terminal {
+    height: calc(100vh - 40px);
+    width: 100%;
+    overflow-y: auto;
+    padding-right: 15px; /* For scrollbar */
+}
+
+#output {
+    white-space: pre-wrap;
+}
+
+.input-line {
+    display: flex;
+    align-items: center;
+}
+
+.prompt {
+    white-space: nowrap;
+}
+
+#command-input {
+    background: transparent;
+    border: none;
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: inherit;
+    text-shadow: inherit;
+    width: 100%;
+    caret-color: var(--foreground);
+}
+
+#command-input:focus {
+    outline: none;
+}
+
+.ascii-art {
+    margin-bottom: 1rem;
+    color: var(--foreground);
+}
+
+.command-output {
+    margin-bottom: 1rem;
+}
+
+.command-output a {
+    color: var(--foreground);
+    text-decoration: underline;
+}
+
+.command-output a:hover {
+    text-decoration: none;
+    background-color: var(--foreground);
+    color: var(--background);
+}
+
+.command-echo {
+    color: #888;
+}
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: var(--background);
+    margin: auto;
+    padding: 30px;
+    border: 2px solid var(--foreground);
+    width: 80%;
+    max-width: 640px;
+    box-shadow: 0 0 20px var(--shadow);
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: var(--foreground);
+}
+
+#modal-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    border: 1px solid var(--foreground);
+}
+
+#modal-description {
+    margin-bottom: 20px;
+}
+
+.modal-project-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--foreground);
+    color: var(--background);
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+}
+
+.modal-project-link:hover {
+    background-color: var(--background);
+    color: var(--foreground);
+    text-shadow: 0 0 5px var(--shadow);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
