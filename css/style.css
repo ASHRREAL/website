@@ -37,11 +37,11 @@ body {
 }
 
 #terminal {
-    height: calc(var(--vh, 1vh) * 90);
+    height: calc(100vh - 40px);
     width: 100%;
     overflow-y: auto;
     padding-right: 15px; /* For scrollbar */
-    padding-bottom: calc(var(--vh, 1vh) * 10); 
+}
 
 #output {
     white-space: pre-wrap;
@@ -167,5 +167,4 @@ body {
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
-}
 }
