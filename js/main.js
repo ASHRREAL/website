@@ -28,7 +28,7 @@ Type or click <a href="#" class="command-link">help</a> to see available command
     const commands = {
         help: () => {
             const commandList = Object.keys(commands).map(c => `  - <a href="#" class="command-link">${c}</a>: ${getCommandDescription(c)}`).join('\n');
-            return `Available commands:\n${commandList}`;
+            return `Available commands:\n-------\n${commandList}`;
         },
         about: "I like Math :33",
         skills: `
