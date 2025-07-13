@@ -208,6 +208,7 @@ SKILLS
             const projectId = e.target.getAttribute('data-project');
             openProjectModal(projectId);
         }
+        commandInput.focus();
     });
 
     async function openProjectModal(projectId) {
