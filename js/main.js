@@ -13,10 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let historyIndex = -1;
     let projectsData = {};
 
-    const asciiArt = "";
+    const asciiArt = String.raw`
+__        __   _                          _ 
+\ \      / /__| | ___ ___  _ __ ___   ___| |
+ \ \ /\ / / _ \ |/ __/ _ \| '_ \` _ \/ _ \ |
+  \ V  V /  __/ | (_| (_) | | | | | |  __/_|
+   \_/\_/ \___|_|\___\___/|_| |_| |_|\___(_)
+`;
+
 
     const welcomeMessage = `Welcome to my portfolio.
-Type <a href="#" class="command-link">help</a> to see available commands.`;
+Type or click <a href="#" class="command-link">help</a> to see available commands.`;
 
     const commands = {
         help: () => {
@@ -98,7 +105,7 @@ SKILLS
         if (typeof commands[command] === 'function') {
             response = commands[command]();
         } else {
-            response = commands[command] || `Command not found: ${command}. Type 'help' for a list of commands.`;
+            response = commands[command] || `Command not found: ${command}. Type or click <a href="#" class="command-link">help</a> for a list of commands.`;
         }
 
         const responseDiv = document.createElement('div');
