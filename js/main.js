@@ -171,6 +171,15 @@ SKILLS
         });
     }
 
+    function adjustForMobileKeyboard() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+        terminal.style.height = `calc(var(--vh, 1vh) * 90)`;
+    }
+    adjustForMobileKeyboard();
+    window.addEventListener('resize', adjustForMobileKeyboard);
+    window.addEventListener('orientationchange', adjustForMobileKeyboard);
+
     commandInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             const command = commandInput.value.trim();
