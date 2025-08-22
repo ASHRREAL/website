@@ -45,14 +45,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const welcomeMessage = `Welcome to my portfolio.
 Type or click <a href="#" class="command-link">help</a> to see available commands.`;
 
-    function initVisitorCounter() {
-        if (!localStorage.getItem('visited')) {
-            let count = parseInt(localStorage.getItem('visitorCount') || '0') + 1;
-            localStorage.setItem('visitorCount', count.toString());
-            localStorage.setItem('visited', 'true');
-            return count;
-        } else {
-            return localStorage.getItem('visitorCount');
+    async function initVisitorCounter() {
+        try {
+            const ipResponse = await fetch('https://api64.ipify.org?format=json');
+            const { ip } = await ipResponse.json();
+
+            const backendResponse = await fetch('/track-visitor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ip })
+            });
+            const data = await backendResponse.json();
+            return data.visitorCount;
+        } catch (error) {
+            console.error("Visitor counter failed:", error);
+            return "N/A";
         }
     }
 
