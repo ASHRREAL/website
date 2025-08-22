@@ -8,12 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDescription = document.getElementById('modal-description');
     const modalLink = document.getElementById('modal-link');
     const closeModal = document.getElementById('close-modal');
+    const visitorCounter = document.createElement('div');
+    visitorCounter.classList.add('visitor-counter');
+    document.body.appendChild(visitorCounter);
+
 
     let commandHistory = [];
     let historyIndex = -1;
     let projectsData = {};
     let currentTheme = 'dark';
-    let visitorCount = 0;
 
     const asciiArt = String.raw`
     ░█████╗░░██████╗██╗░░██╗
@@ -45,6 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const welcomeMessage = `Welcome to my portfolio.
 Type or click <a href="#" class="command-link">help</a> to see available commands.`;
 
+    function isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
     async function initVisitorCounter() {
         try {
             const res = await fetch('https://visitor.6developer.com/visit', {
@@ -59,18 +66,20 @@ Type or click <a href="#" class="command-link">help</a> to see available command
                 })
             });
             const data = await res.json();
+            visitorCounter.textContent = `Visitors: ${data.totalCount}`;
             return data.totalCount;
         } catch (error) {
             console.error("Visitor counter failed:", error);
+            visitorCounter.textContent = "Visitors: N/A";
             return "N/A";
         }
     }
 
 
     const commands = {
-        help: () => {
-            const count = initVisitorCounter();
-            const commandList = Object.keys(commands) .filter(c => c !== 'spinosaurus').map(c => `  - <a href="#" class="command-link">${c}</a>: ${getCommandDescription(c)}`).join('\n');
+        help: async () => {
+            const count = await initVisitorCounter();
+            const commandList = Object.keys(commands).filter(c => c !== 'spinosaurus').map(c => `  - <a href="#" class="command-link">${c}</a>: ${getCommandDescription(c)}`).join('\n');
             return `Available commands:
 -------
 ${commandList}
@@ -96,7 +105,7 @@ Concepts              :  SDLC, Agile, API Integration, GUI Development,
                           Data Structures & Algorithms, Cloud Storage,
                           Embedded Systems`;
         },
-        experience: () => `No technical experience outside my projects :(`,
+        experience: () => `No technical experience outside my projects :(\n`,
         education: () => `University of Guelph - Computer Engineering (Expected Graduation: 2029)
 Relevant Coursework: Data Structures, Algorithms, Software Design, Computer Systems, Database Systems`,
         projects: () => {
@@ -104,7 +113,8 @@ Relevant Coursework: Data Structures, Algorithms, Software Design, Computer Syst
             Object.keys(projectsData).forEach(key => {
                 projectList += `  <div class="project-card" data-project="${key}">${projectsData[key].title}</div>\n`;
             });
-            projectList += `\nFor more, visit my <a href="https://github.com/ASHRREAL" target="_blank">GitHub</a>.`;
+            projectList += `
+For more, visit my <a href="https://github.com/ASHRREAL" target="_blank">GitHub</a>.`;
             return projectList;
         },
         contact: `
@@ -130,7 +140,8 @@ CONTACT
             });
             
             if (commandHistory.length > 10) {
-                historyList += `\n  ... and ${commandHistory.length - 10} more commands`;
+                historyList += `
+  ... and ${commandHistory.length - 10} more commands`;
             }
             
             return historyList;
@@ -194,15 +205,16 @@ CONTACT
         }, speed);
     }
 
-    function executeCommand(command) {
+    async function executeCommand(command) {
         command = command.toLowerCase().trim();
         commandHistory.unshift(command);
         historyIndex = -1;
 
         const echoDiv = document.createElement('div');
         echoDiv.classList.add('command-echo');
-        echoDiv.innerHTML = `<span class="prompt">>&nbsp;</span>${command}`;
+        echoDiv.innerHTML = `<span class="prompt">&gt;&nbsp;</span>${command}`;
         output.appendChild(echoDiv);
+        terminal.scrollTop = terminal.scrollHeight;
 
         if (command === 'clear') {
             output.innerHTML = '';
@@ -217,7 +229,7 @@ CONTACT
 
         let response;
         if (typeof commands[actualCommand] === 'function') {
-            response = commands[actualCommand]();
+            response = await commands[actualCommand]();
         } else {
             response = commands[actualCommand] || `Command not found: ${command}. Type or click <a href="#" class="command-link">help</a> for a list of commands.`;
         }
@@ -225,6 +237,7 @@ CONTACT
         const responseDiv = document.createElement('div');
         responseDiv.classList.add('command-output');
         output.appendChild(responseDiv);
+        terminal.scrollTop = terminal.scrollHeight;
 
         const commandsToAnimate = ['help', 'about', 'skills', 'experience', 'education', 'projects', 'contact', 'history', 'spinosaurus'];
 
@@ -240,18 +253,22 @@ CONTACT
                         terminal.scrollTop = terminal.scrollHeight;
                     });
                 } else {
-                    type(response, responseDiv);
+                    type(response, responseDiv, () => {
+                        terminal.scrollTop = terminal.scrollHeight;
+                    });
                 }
             } else {
                 responseDiv.innerHTML = response;
+                terminal.scrollTop = terminal.scrollHeight;
             }
         } else if (typeof response === 'string' && !response.includes('<') && !response.includes('&')) {
-            type(response, responseDiv);
+            type(response, responseDiv, () => {
+                terminal.scrollTop = terminal.scrollHeight;
+            });
         } else {
             responseDiv.innerHTML = response;
+            terminal.scrollTop = terminal.scrollHeight;
         }
-
-        terminal.scrollTop = terminal.scrollHeight;
     }
 
     function autocomplete(input) {
@@ -282,10 +299,12 @@ CONTACT
             errorDiv.classList.add('command-output');
             errorDiv.textContent = 'Error: Could not load projects.json';
             output.appendChild(errorDiv);
+            terminal.scrollTop = terminal.scrollHeight;
         }
     }
 
     function startTerminal() {
+        commandInput.disabled = true;
         const artDiv = document.createElement('div');
         artDiv.classList.add('ascii-art');
         output.appendChild(artDiv);
@@ -302,6 +321,10 @@ CONTACT
             type(textToType, welcomeDiv, () => {
                 welcomeDiv.innerHTML = welcomeMessage;
                 terminal.scrollTop = terminal.scrollHeight;
+                commandInput.disabled = false;
+                if (!isMobile()) {
+                    commandInput.focus();
+                }
             });
         });
     }
@@ -348,7 +371,14 @@ CONTACT
             const projectId = e.target.getAttribute('data-project');
             openProjectModal(projectId);
         }
-        commandInput.focus();
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && projectModal.style.display === 'flex') {
+            closeProjectModal();
+        } else if (!isMobile() && document.activeElement !== commandInput) {
+            commandInput.focus();
+        }
     });
 
     async function openProjectModal(projectId) {
@@ -374,6 +404,7 @@ CONTACT
             errorDiv.classList.add('command-output');
             errorDiv.textContent = `Error: Could not load details for ${projectId}.`;
             output.appendChild(errorDiv);
+            terminal.scrollTop = terminal.scrollHeight;
         }
     }
 
@@ -386,12 +417,6 @@ CONTACT
     }
 
     closeModal.addEventListener('click', closeProjectModal);
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && projectModal.style.display === 'flex') {
-            closeProjectModal();
-        }
-    });
-
     window.addEventListener('click', (e) => {
         if (e.target === projectModal) {
             closeProjectModal();
@@ -400,6 +425,7 @@ CONTACT
 
     async function init() {
         await loadProjects();
+        await initVisitorCounter();
         startTerminal();
     }
 

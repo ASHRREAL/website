@@ -299,6 +299,17 @@ body {
     font-size: 0.9rem;
 }
 
+.visitor-counter {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
 @media (max-width: 768px) {
     body {
         font-size: 1rem;
@@ -327,6 +338,6 @@ body {
     }
     
     #terminal {
-        padding-bottom: 60px; 
+        padding-bottom: 10vh;
     }
 }
