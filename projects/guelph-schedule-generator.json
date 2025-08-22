@@ -1,6 +1,7 @@
 {
     "title": "Guelph Schedule Generator",
-    "description": "A tool to generate university course schedules. It includes a live section checker to see if a course section is open or closed. Built with Python and HTML.",
+    "description": "A tool to generate university course schedules. It includes a live section checker to see if a course section is open or closed. Built with Python and HTML. This project solves a real problem for students at the University of Guelph by simplifying the course scheduling process.",
     "image": "guelph-schedule-generator.png",
-    "url": "https://github.com/ASHRREAL/guelph-schedule-generator"
+    "url": "https://github.com/ASHRREAL/guelph-schedule-generator",
+    "tech": "Python, HTML"
 }

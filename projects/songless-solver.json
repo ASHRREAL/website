@@ -1,6 +1,7 @@
 {
     "title": "Songless Solver",
-    "description": "A browser extension that attempts to solve songs in the Songless game. It requires user-provided ACRCloud API keys to function. Built with JavaScript, HTML, and CSS.",
+    "description": "A browser extension that attempts to solve songs in the Songless game. It requires user-provided ACRCloud API keys to function. Built with JavaScript, HTML, and CSS. This project showcases API integration skills and demonstrates how to build browser extensions that interact with external services.",
     "image": "songless-solver.png",
-    "url": "https://github.com/ASHRREAL/songless-solver"
+    "url": "https://github.com/ASHRREAL/songless-solver",
+    "tech": "JavaScript, HTML, CSS, ACRCloud API"
 }

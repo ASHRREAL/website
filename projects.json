@@ -1,11 +1,14 @@
 {
     "discloud": {
-        "title": "DisCloud"
+        "title": "DisCloud",
+        "tech": "Python, Discord API"
     },
     "guelph-schedule-generator": {
-        "title": "Guelph Schedule Generator"
+        "title": "Guelph Schedule Generator",
+        "tech": "Python, HTML"
     },
     "songless-solver": {
-        "title": "Songless Solver"
+        "title": "Songless Solver",
+        "tech": "JavaScript, HTML, CSS, ACRCloud API"
     }
 }

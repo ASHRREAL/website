@@ -2,6 +2,16 @@
     --background: #0c0c0c;
     --foreground: #00ff41;
     --shadow: rgba(0, 255, 65, 0.7);
+    --accent: #008f11;
+    --highlight: #39ff14;
+}
+
+:root[dark-mode="false"] {
+    --background: #f0f0f0;
+    --foreground: #0c0c0c;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --accent: #555;
+    --highlight: #000;
 }
 
 * {
@@ -18,6 +28,7 @@ body {
     margin: 0;
     padding: 20px;
     overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .scanlines {
@@ -71,33 +82,57 @@ body {
     outline: none;
 }
 
+#command-input::placeholder {
+    color: var(--accent);
+}
+
 .ascii-art {
     margin-bottom: 1rem;
     color: var(--foreground);
+    text-align: center;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 5px var(--shadow);
+    }
+    to {
+        text-shadow: 0 0 15px var(--shadow), 0 0 25px var(--shadow);
+    }
 }
 
 .command-output {
     margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .command-output a {
     color: var(--foreground);
     text-decoration: underline;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .command-output a:hover {
     text-decoration: none;
     background-color: var(--foreground);
     color: var(--background);
+    text-shadow: none;
 }
 
 .command-echo {
-    color: #888;
+    color: var(--accent);
 }
 
 /* Modal Styles */
 .modal {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
     z-index: 100;
     left: 0;
@@ -123,13 +158,14 @@ body {
 }
 
 .close-button {
-    color: #aaa;
+    color: var(--accent);
     position: absolute;
     top: 10px;
     right: 20px;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    transition: color 0.2s;
 }
 
 .close-button:hover,
@@ -142,10 +178,19 @@ body {
     height: auto;
     margin-bottom: 20px;
     border: 1px solid var(--foreground);
+    border-radius: 4px;
 }
 
 #modal-description {
     margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+#modal-tech-stack {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-left: 3px solid var(--foreground);
 }
 
 .modal-project-link {
@@ -156,15 +201,110 @@ body {
     text-decoration: none;
     font-weight: bold;
     transition: all 0.2s ease-in-out;
+    border-radius: 4px;
+    margin-top: 10px;
 }
 
 .modal-project-link:hover {
     background-color: var(--background);
     color: var(--foreground);
     text-shadow: 0 0 5px var(--shadow);
+    transform: translateY(-2px);
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+.project-card {
+    display: inline-block;
+    margin: 5px;
+    padding: 8px 12px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.project-card:hover {
+    background-color: var(--accent);
+    color: var(--background);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.timeline-container {
+    margin: 20px 0;
+    padding-left: 20px;
+    border-left: 2px solid var(--foreground);
+}
+
+.timeline-item {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.timeline-item:before {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--foreground);
+    left: -27px;
+    top: 5px;
+}
+
+.timeline-date {
+    color: var(--accent);
+    font-weight: bold;
+}
+
+.skills-category {
+    margin-bottom: 15px;
+}
+
+.skills-category h3 {
+    border-bottom: 1px solid var(--accent);
+    padding-bottom: 5px;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.skill-tag {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--accent);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+/* Visitor counter */
+.visitor-counter {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    body {
+        font-size: 1rem;
+        padding: 10px;
+    }
+    
+    #terminal {
+        height: calc(100vh - 20px);
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
 }

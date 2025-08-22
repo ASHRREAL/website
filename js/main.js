@@ -12,45 +12,131 @@ document.addEventListener('DOMContentLoaded', () => {
     let commandHistory = [];
     let historyIndex = -1;
     let projectsData = {};
+    let currentTheme = 'dark';
+    let visitorCount = 0;
 
     const asciiArt = String.raw`
-__        __   _                          _ 
-\ \      / /__| | ___ ___  _ __ ___   ___| |
- \ \ /\ / / _ \ |/ __/ _ \| '_ \` _ \/ _ \ |
-  \ V  V /  __/ | (_| (_) | | | | | |  __/_|
-   \_/\_/ \___|_|\___\___/|_| |_| |_|\___(_)
+    ░█████╗░░██████╗██╗░░██╗
+    ██╔══██╗██╔════╝██║░░██║
+    ███████║╚█████╗░███████║
+    ██╔══██║░╚═══██╗██╔══██║
+    ██║░░██║██████╔╝██║░░██║
+    ╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝
 `;
 
+    const spinosaurusArt = String.raw`
+⠀⠀⠀⠀⠀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣾⣿⣿⣿⣿⣷⣆⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⣠⣾⡟⢿⣿⣿⣿⣿⣿⡄⠀⠀⢀⣴⢿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⣾⠛⠃⠀⢸⣿⠋⢻⣿⣿⣧⠀⢀⣾⣿⢾⢻⡏⣿⣹⡇⡿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢀⣽⡇⠀⢸⣿⣿⡿⣷⣿⣿⣿⣿⣿⣷⣿⣾⣿⣿⣸⡿⣽⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠈⠛⠀⠀⠈⢿⣿⣟⣿⣽⣿⡻⡿⡿⣿⣿⣿⣿⣿⣿⣿⣿⣏⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⣿⣿⣾⣿⡶⣐⠠⡠⡾⠙⠹⢿⣿⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣯⣷⣆⡄⡡⣲⡰⣾⣿⣽⣿⣿⣿⣿⣷⣶⣤⣤⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⣷⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⡄⠀⠉⠉⠛⢹⣿⣿⣿⣿⣿⡿⠿⠿⢿⣿⣿⣿⣽⣳⣿⣿⣿⣿⣿⣶⣤⣄⣀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⢻⣿⡟⠀⠀⠀⠀⠈⣿⡿⠈⠻⢿⣿⡀⠀⠀⠀⠈⠉⠛⠿⢿⣿⣯⣟⣿⣿⣿⣿⣿⣿⣶⣤⡀⠀
+⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠀⠁⠀⠀⠀⠀⠀⠀⢸⣧⠀⠀⠀⠹⣷⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠛⠻⠿⣿⣿⣿⣿⣿⣿⣿⠄
+⠰⣶⣾⣿⣿⣦⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣴⣿⠃⠀⠀⣤⣾⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠻⠋⠀
+⠘⣿⣿⣿⣿⣾⣿⣿⣿⣷⣶⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠘⠛⠿⠿⠿⠿⠿⠛⠛⠛⠛⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+`;
 
     const welcomeMessage = `Welcome to my portfolio.
 Type or click <a href="#" class="command-link">help</a> to see available commands.`;
 
+    function initVisitorCounter() {
+        if (!localStorage.getItem('visited')) {
+            let count = parseInt(localStorage.getItem('visitorCount') || '0') + 1;
+            localStorage.setItem('visitorCount', count.toString());
+            localStorage.setItem('visited', 'true');
+            return count;
+        } else {
+            return localStorage.getItem('visitorCount');
+        }
+    }
+
+
     const commands = {
         help: () => {
-            const commandList = Object.keys(commands).map(c => `  - <a href="#" class="command-link">${c}</a>: ${getCommandDescription(c)}`).join('\n');
-            return `Available commands:\n-------\n${commandList}`;
+            const count = initVisitorCounter();
+            const commandList = Object.keys(commands) .filter(c => c !== 'spinosaurus').map(c => `  - <a href="#" class="command-link">${c}</a>: ${getCommandDescription(c)}`).join('\n');
+            return `Available commands:
+-------
+${commandList}
+
+Visitor Count: ${count}`;
         },
-        about: "I like Math :33",
-        skills: `
+        about: `I like math and circuits :33`,
+        skills: () => {
+            return `
 SKILLS
 ------
-   - Programming Languages:         Java, C++, Python, JavaScript, HTML, CSS, C
-   - Object-Oriented Programming:   Proficient in OOP principles, design patterns (e.g., MVC), inheritance, and polymorphism.
-   - Dev Tools & Platforms:         Git, Linux, IntelliJ IDEA, VS Code, Browser Extension Development, Raspberry Pi, Arduino
-   - APIs & Libraries:              Discord.py, ACRCloud API, aiohttp, aiofiles, CustomTkinter, Pillow
-   - Concepts:                      SDLC, Agile Methodologies, API Integration, GUI Development, Data Structures & Algorithms, Cloud Storage Concepts, Embedded Systems
-`,
-        experience: `No technical exprience yet outside of my projects :(.`,
+Programming Languages :  Java, C++, Python, JavaScript, HTML, CSS, C
+
+Object-Oriented Prog. :  OOP principles, design patterns (MVC), inheritance, polymorphism
+
+Dev Tools & Platforms :  Git, Linux, IntelliJ IDEA, VS Code,
+                          Browser Extension Dev, Raspberry Pi, Arduino
+
+APIs & Libraries      :  Discord.py, ACRCloud API, aiohttp, aiofiles,
+                          CustomTkinter, Pillow
+
+Concepts              :  SDLC, Agile, API Integration, GUI Development,
+                          Data Structures & Algorithms, Cloud Storage,
+                          Embedded Systems`;
+        },
+        experience: `No technical experience outside my projects :(`,
+        education: `University of Guelph - Computer Engineering (Expected Graduation: 2029)
+Relevant Coursework: Data Structures, Algorithms, Software Design, Computer Systems, Database Systems`,
         projects: () => {
-            let projectList = 'Fetching projects...\n-------\n';
+            let projectList = 'My Projects:\n-------\n';
             Object.keys(projectsData).forEach(key => {
-                projectList += `  - <a href="#" class="project-link" data-project="${key}">${projectsData[key].title}</a>\n`;
+                projectList += `  <div class="project-card" data-project="${key}">${projectsData[key].title}</div>\n`;
             });
             projectList += `\nFor more, visit my <a href="https://github.com/ASHRREAL" target="_blank">GitHub</a>.`;
             return projectList;
         },
-        contact: `\nCONTACT\n-------\n   - GitHub:   <a href="https://github.com/ASHRREAL" target="_blank">github.com/ASHRREAL</a>\n   - LinkedIn: <a href="https://www.linkedin.com/in/seiar-husain-4aa3ba338/" target="_blank">linkedin.com/in/seiar-husain-4aa3ba338</a>\n   - Email:    <a href="mailto:ahmadseiar011@gmail.com">ahmadseiar011@gmail.com</a>\n`,
+        contact: `
+CONTACT
+-------
+   - GitHub:   <a href="https://github.com/ASHRREAL" target="_blank">github.com/ASHRREAL</a>
+   - LinkedIn: <a href="https://www.linkedin.com/in/seiar-husain-4aa3ba338/" target="_blank">linkedin.com/in/seiar-husain-4aa3ba338</a>
+   - Email:    <a href="mailto:ahmadseiar011@gmail.com">ahmadseiar011@gmail.com</a>
+`,
+        theme: () => {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('dark-mode', currentTheme === 'dark');
+            return `Theme switched to ${currentTheme} mode.`;
+        },
+        history: () => {
+            if (commandHistory.length === 0) {
+                return "No command history available.";
+            }
+            
+            let historyList = "Command History:\n-------\n";
+            commandHistory.slice(0, 10).forEach((cmd, index) => {
+                historyList += `  ${index + 1}. ${cmd}\n`;
+            });
+            
+            if (commandHistory.length > 10) {
+                historyList += `\n  ... and ${commandHistory.length - 10} more commands`;
+            }
+            
+            return historyList;
+        },
         clear: "",
+        spinosaurus: () => {
+            return spinosaurusArt;
+        }
+    };
+
+    const aliases = {
+        proj: 'projects',
+        exp: 'experience',
+        edu: 'education',
+        cont: 'contact',
+        spinos: 'spinosaurus'
     };
 
     function getCommandDescription(command) {
@@ -59,9 +145,12 @@ SKILLS
             about: 'Display information about me',
             skills: 'List my technical skills',
             experience: 'Show my work experience',
+            education: 'Show my educational background',
             projects: 'List my projects',
             contact: 'Show my contact information',
-            clear: 'Clear the terminal screen'
+            theme: 'Toggle between light and dark themes',
+            history: 'Show command history',
+            clear: 'Clear the terminal screen',
         };
         return descriptions[command] || '';
     }
@@ -92,49 +181,48 @@ SKILLS
 
         const echoDiv = document.createElement('div');
         echoDiv.classList.add('command-echo');
-        echoDiv.innerHTML = `<span class="prompt">> </span>${command}`;
+        echoDiv.innerHTML = `<span class="prompt">>&nbsp;</span>${command}`;
         output.appendChild(echoDiv);
 
         if (command === 'clear') {
             output.innerHTML = '';
             startTerminal();
-            const asciiArt = String.raw`
-            __        __   _                          _ 
-            \ \      / /__| | ___ ___  _ __ ___   ___| |
-            \ \ /\ / / _ \ |/ __/ _ \| '_ \` _ \/ _ \ |
-            \ V  V /  __/ | (_| (_) | | | | | |  __/_|
-            \_/\_/ \___|_|\___\___/|_| |_| |_|\___(_)
-            `;
-
-
-            const welcomeMessage = `Welcome to my portfolio.
-            Type or click <a href="#" class="command-link">help</a> to see available commands.`;
             return;
         }
 
+        let actualCommand = command;
+        if (aliases[command]) {
+            actualCommand = aliases[command];
+        }
+
         let response;
-        if (typeof commands[command] === 'function') {
-            response = commands[command]();
+        if (typeof commands[actualCommand] === 'function') {
+            response = commands[actualCommand]();
         } else {
-            response = commands[command] || `Command not found: ${command}. Type or click <a href="#" class="command-link">help</a> for a list of commands.`;
+            response = commands[actualCommand] || `Command not found: ${command}. Type or click <a href="#" class="command-link">help</a> for a list of commands.`;
         }
 
         const responseDiv = document.createElement('div');
         responseDiv.classList.add('command-output');
         output.appendChild(responseDiv);
 
-        const commandsToAnimate = ['help', 'about', 'skills', 'experience', 'projects', 'contact'];
+        const commandsToAnimate = ['help', 'about', 'skills', 'experience', 'education', 'projects', 'contact', 'history', 'spinosaurus'];
 
-        if (commandsToAnimate.includes(command)) {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = response;
-            const textToType = tempDiv.textContent;
-
-            type(textToType, responseDiv, () => {
+        if (commandsToAnimate.includes(actualCommand)) {
+            if (typeof response === 'string' && (response.includes('<') || response.includes('&'))) {
                 responseDiv.innerHTML = response;
                 terminal.scrollTop = terminal.scrollHeight;
-            });
-        } else if (!response.includes('<') && !response.includes('&')) {
+            } else {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = response;
+                const textToType = tempDiv.textContent;
+
+                type(textToType, responseDiv, () => {
+                    responseDiv.innerHTML = response;
+                    terminal.scrollTop = terminal.scrollHeight;
+                });
+            }
+        } else if (typeof response === 'string' && !response.includes('<') && !response.includes('&')) {
             type(response, responseDiv);
         } else {
             responseDiv.innerHTML = response;
@@ -143,6 +231,23 @@ SKILLS
         terminal.scrollTop = terminal.scrollHeight;
     }
 
+    function autocomplete(input) {
+        const value = input.toLowerCase();
+        const allCommands = [...Object.keys(commands), ...Object.keys(aliases)];
+        const matches = allCommands.filter(cmd => cmd.startsWith(value));
+        
+        if (matches.length === 1) {
+            return matches[0];
+        } else if (matches.length > 1) {
+            const suggestionsDiv = document.createElement('div');
+            suggestionsDiv.classList.add('command-output');
+            suggestionsDiv.innerHTML = `Suggestions: ${matches.join(', ')}`;
+            output.appendChild(suggestionsDiv);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        
+        return input;
+    }
 
     async function loadProjects() {
         try {
@@ -193,6 +298,11 @@ SKILLS
                 historyIndex = -1;
                 commandInput.value = '';
             }
+        } else if (e.key === 'Tab') {
+            e.preventDefault();
+            if (commandInput.value) {
+                commandInput.value = autocomplete(commandInput.value);
+            }
         }
     });
 
@@ -203,7 +313,7 @@ SKILLS
             commandInput.value = command;
             executeCommand(command);
             commandInput.value = '';
-        } else if (e.target.classList.contains('project-link')) {
+        } else if (e.target.classList.contains('project-card')) {
             e.preventDefault();
             const projectId = e.target.getAttribute('data-project');
             openProjectModal(projectId);
@@ -219,6 +329,12 @@ SKILLS
             modalTitle.textContent = project.title;
             modalImage.src = `images/${project.image}`;
             modalDescription.textContent = project.description;
+            
+            const techStackDiv = document.createElement('div');
+            techStackDiv.id = 'modal-tech-stack';
+            techStackDiv.innerHTML = `<strong>Tech Stack:</strong> ${project.tech || 'Not specified'}`;
+            modalDescription.parentNode.insertBefore(techStackDiv, modalDescription.nextSibling);
+            
             modalLink.href = project.url;
             projectModal.style.display = 'flex';
 
@@ -233,11 +349,21 @@ SKILLS
 
     function closeProjectModal() {
         projectModal.style.display = 'none';
+        const techStackDiv = document.getElementById('modal-tech-stack');
+        if (techStackDiv) {
+            techStackDiv.remove();
+        }
     }
 
     closeModal.addEventListener('click', closeProjectModal);
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && projectModal.style.display === 'flex') {
+            closeProjectModal();
+        }
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === projectModal) {
             closeProjectModal();
         }
     });
