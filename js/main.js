@@ -47,16 +47,9 @@ Type or click <a href="#" class="command-link">help</a> to see available command
 
     async function initVisitorCounter() {
         try {
-            const ipResponse = await fetch('https://api64.ipify.org?format=json');
-            const { ip } = await ipResponse.json();
-
-            const backendResponse = await fetch('/track-visitor', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ip })
-            });
-            const data = await backendResponse.json();
-            return data.visitorCount;
+            const response = await fetch('https://api.countapi.xyz/hit/ashrreal-website/visits');
+            const data = await response.json();
+            return data.value;
         } catch (error) {
             console.error("Visitor counter failed:", error);
             return "N/A";
