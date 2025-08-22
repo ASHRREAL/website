@@ -47,9 +47,19 @@ Type or click <a href="#" class="command-link">help</a> to see available command
 
     async function initVisitorCounter() {
         try {
-            const response = await fetch('https://api.countapi.xyz/hit/ashrreal-website/visits');
-            const data = await response.json();
-            return data.value;
+            const res = await fetch('https://visitor.6developer.com/visit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    domain: 'ashrreal.github.io',
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    page_path: window.location.pathname,
+                    page_title: document.title,
+                    referrer: document.referrer
+                })
+            });
+            const data = await res.json();
+            return data.totalCount;
         } catch (error) {
             console.error("Visitor counter failed:", error);
             return "N/A";
