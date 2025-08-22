@@ -45,19 +45,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const welcomeMessage = `Welcome to my portfolio.
 Type or click <a href="#" class="command-link">help</a> to see available commands.`;
 
-    function initVisitorCounter() {
-        let visited = localStorage.getItem('visited');
-        let count = parseInt(localStorage.getItem('visitorCount') || '0');
-
-        if (!visited) {
-            count++;
-            localStorage.setItem('visitorCount', count.toString());
-            localStorage.setItem('visited', 'true');
+    async function initVisitorCounter() {
+        try {
+            const res = await fetch('https://visitor.6developer.com/visit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    domain: 'ashrreal.github.io',
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    page_path: window.location.pathname,
+                    page_title: document.title,
+                    referrer: document.referrer
+                })
+            });
+            const data = await res.json();
+            return data.totalCount;
+        } catch (error) {
+            console.error("Visitor counter failed:", error);
+            return "N/A";
         }
-
-        return count;
     }
-
 
 
     const commands = {
