@@ -52,15 +52,23 @@ body {
     width: 100%;
     overflow-y: auto;
     padding-right: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 #output {
     white-space: pre-wrap;
+    flex-grow: 1;
 }
 
 .input-line {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    background-color: var(--background);
+    padding: 5px 0;
 }
 
 .prompt {
@@ -280,7 +288,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* Visitor counter */
 .visitor-counter {
     position: fixed;
     bottom: 10px;
@@ -292,19 +299,34 @@ body {
     font-size: 0.9rem;
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
     body {
         font-size: 1rem;
         padding: 10px;
+        -webkit-text-size-adjust: 100%;
     }
     
     #terminal {
         height: calc(100vh - 20px);
+        -webkit-overflow-scrolling: touch;
     }
     
     .modal-content {
         width: 95%;
         padding: 20px;
+    }
+    
+    .input-line {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 10px;
+        background-color: var(--background);
+        z-index: 20;
+    }
+    
+    #terminal {
+        padding-bottom: 60px; 
     }
 }

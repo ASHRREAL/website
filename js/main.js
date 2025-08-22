@@ -1,49 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const output = document.getElementById('output');
-    const commandInput = document.getElementById('command-input');
-    const terminal = document.getElementById('terminal');
-    const projectModal = document.getElementById('project-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalImage = document.getElementById('modal-image');
-    const modalDescription = document.getElementById('modal-description');
-    const modalLink = document.getElementById('modal-link');
-    const closeModal = document.getElementById('close-modal');
-
-    let commandHistory = [];
-    let historyIndex = -1;
-    let projectsData = {};
-    let currentTheme = 'dark';
-    let visitorCount = 0;
-
-    const asciiArt = String.raw`
-    ░█████╗░░██████╗██╗░░██╗
-    ██╔══██╗██╔════╝██║░░██║
-    ███████║╚█████╗░███████║
-    ██╔══██║░╚═══██╗██╔══██║
-    ██║░░██║██████╔╝██║░░██║
-    ╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝
-`;
-
-    const spinosaurusArt = String.raw`
-⠀⠀⠀⠀⠀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⣾⣿⣿⣿⣿⣷⣆⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⣠⣾⡟⢿⣿⣿⣿⣿⣿⡄⠀⠀⢀⣴⢿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣾⠛⠃⠀⢸⣿⠋⢻⣿⣿⣧⠀⢀⣾⣿⢾⢻⡏⣿⣹⡇⡿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⢀⣽⡇⠀⢸⣿⣿⡿⣷⣿⣿⣿⣿⣿⣷⣿⣾⣿⣿⣸⡿⣽⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠈⠛⠀⠀⠈⢿⣿⣟⣿⣽⣿⡻⡿⡿⣿⣿⣿⣿⣿⣿⣿⣿⣏⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⣿⣿⣾⣿⡶⣐⠠⡠⡾⠙⠹⢿⣿⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣯⣷⣆⡄⡡⣲⡰⣾⣿⣽⣿⣿⣿⣿⣷⣶⣤⣤⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⣷⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⡄⠀⠉⠉⠛⢹⣿⣿⣿⣿⣿⡿⠿⠿⢿⣿⣿⣿⣽⣳⣿⣿⣿⣿⣿⣶⣤⣄⣀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⢻⣿⡟⠀⠀⠀⠀⠈⣿⡿⠈⠻⢿⣿⡀⠀⠀⠀⠈⠉⠛⠿⢿⣿⣯⣟⣿⣿⣿⣿⣿⣿⣶⣤⡀⠀
-⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠀⠁⠀⠀⠀⠀⠀⠀⢸⣧⠀⠀⠀⠹⣷⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠛⠻⠿⣿⣿⣿⣿⣿⣿⣿⠄
-⠰⣶⣾⣿⣿⣦⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣴⣿⠃⠀⠀⣤⣾⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠻⠋⠀
-⠘⣿⣿⣿⣿⣾⣿⣿⣿⣷⣶⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠘⠛⠿⠿⠿⠿⠿⠛⠛⠛⠛⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-`;
-
-    const welcomeMessage = `Welcome to my portfolio.
-Type or click <a href="#" class="command-link">help</a> to see available commands.`;
+document.addEventListener('DOMContentLoaded', () => {\n    const output = document.getElementById('output');\n    const commandInput = document.getElementById('command-input');\n    const terminal = document.getElementById('terminal');\n    const projectModal = document.getElementById('project-modal');\n    const modalTitle = document.getElementById('modal-title');\n    const modalImage = document.getElementById('modal-image');\n    const modalDescription = document.getElementById('modal-description');\n    const modalLink = document.getElementById('modal-link');\n    const closeModal = document.getElementById('close-modal');\n\n    let commandHistory = [];\n    let historyIndex = -1;\n    let projectsData = {};\n    let currentTheme = 'dark';\n    let visitorCount = 0;\n\n    // Check if device is mobile\n    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);\n\n    // Only autofocus on non-mobile devices\n    if (!isMobile) {\n        commandInput.focus();\n    }\n\n    const asciiArt = String.raw`\n    ░█████╗░░██████╗██╗░░██╗\n    ██╔══██╗██╔════╝██║░░██║\n    ███████║╚█████╗░███████║\n    ██╔══██║░╚═══██╗██╔══██║\n    ██║░░██║██████╔╝██║░░██║\n    ╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝\n`;\n\n    const spinosaurusArt = String.raw`\n⠀⠀⠀⠀⠀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⣾⣿⣿⣿⣿⣷⣆⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⣠⣾⡟⢿⣿⣿⣿⣿⣿⡄⠀⠀⢀⣴⢿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⣾⠛⠃⠀⢸⣿⠋⢻⣿⣿⣧⠀⢀⣾⣿⢾⢻⡏⣿⣹⡇⡿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⢀⣽⡇⠀⢸⣿⣿⡿⣷⣿⣿⣿⣿⣿⣷⣿⣾⣿⣿⣸⡿⣽⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠈⠛⠀⠀⠈⢿⣿⣟⣿⣽⣿⡻⡿⡿⣿⣿⣿⣿⣿⣿⣿⣿⣏⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⣿⣿⣾⣿⡶⣐⠠⡠⡾⠙⠹⢿⣿⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣯⣷⣆⡄⡡⣲⡰⣾⣿⣽⣿⣿⣿⣿⣷⣶⣤⣤⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⣷⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⡄⠀⠉⠉⠛⢹⣿⣿⣿⣿⣿⡿⠿⠿⢿⣿⣿⣿⣽⣳⣿⣿⣿⣿⣿⣶⣤⣄⣀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⢻⣿⡟⠀⠀⠀⠀⠈⣿⡿⠈⠻⢿⣿⡀⠀⠀⠀⠈⠉⠛⠿⢿⣿⣯⣟⣿⣿⣿⣿⣿⣿⣶⣤⡀⠀\n⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠀⠁⠀⠀⠀⠀⠀⠀⢸⣧⠀⠀⠀⠹⣷⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠛⠻⠿⣿⣿⣿⣿⣿⣿⣿⠄\n⠰⣶⣾⣿⣿⣦⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣴⣿⠃⠀⠀⣤⣾⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠻⠋⠀\n⠘⣿⣿⣿⣿⣾⣿⣿⣿⣷⣶⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠘⠛⠿⠿⠿⠿⠿⠛⠛⠛⠛⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n`;\n\n    const welcomeMessage = `Welcome to my portfolio.\\nType or click <a href=\"#\" class=\"command-link\">help</a> to see available commands.`;
 
     function initVisitorCounter() {
         let visited = localStorage.getItem('visited');
@@ -70,7 +25,7 @@ ${commandList}
 
 Visitor Count: ${count}`;
         },
-        about: `I like math and circuits :33`,
+        about: () => `I like math and circuits :33`,
         skills: () => {
             return `
 SKILLS
@@ -89,8 +44,8 @@ Concepts              :  SDLC, Agile, API Integration, GUI Development,
                           Data Structures & Algorithms, Cloud Storage,
                           Embedded Systems`;
         },
-        experience: `No technical experience outside my projects :(`,
-        education: `University of Guelph - Computer Engineering (Expected Graduation: 2029)
+        experience: () => `No technical experience outside my projects :(`,
+        education: () => `University of Guelph - Computer Engineering (Expected Graduation: 2029)
 Relevant Coursework: Data Structures, Algorithms, Software Design, Computer Systems, Database Systems`,
         projects: () => {
             let projectList = 'My Projects:\n-------\n';
@@ -158,24 +113,7 @@ CONTACT
         return descriptions[command] || '';
     }
 
-    function type(text, element, callback) {
-        element.innerHTML = '';
-        let i = 0;
-        const typing = setInterval(() => {
-            if (i < text.length) {
-                if (text.charAt(i) === '\n') {
-                    element.innerHTML += '<br>';
-                } else {
-                    element.innerHTML += text.charAt(i);
-                }
-                i++;
-                terminal.scrollTop = terminal.scrollHeight;
-            } else {
-                clearInterval(typing);
-                if (callback) callback();
-            }
-        }, 5);
-    }
+    function type(text, element, callback) {\n        element.innerHTML = '';\n        let i = 0;\n        \n        const baseSpeed = 5;\n        const minSpeed = 1;\n        const maxLengthForBaseSpeed = 100;\n        \n        let speed = baseSpeed;\n        if (text.length > maxLengthForBaseSpeed) {\n            speed = Math.max(minSpeed, baseSpeed - Math.floor(text.length / 100));\n        }\n        \n        const typing = setInterval(() => {\n            if (i < text.length) {\n                if (text.charAt(i) === '\n') {\n                    element.innerHTML += '<br>';\n                } else {\n                    element.innerHTML += text.charAt(i);\n                }\n                i++;\n                // Improved scrolling for mobile\n                if (!isMobile || i % 5 === 0) {\n                    terminal.scrollTop = terminal.scrollHeight;\n                }\n            } else {\n                clearInterval(typing);\n                if (callback) callback();\n                // Ensure final scroll position\n                terminal.scrollTop = terminal.scrollHeight;\n            }\n        }, speed);\n    }
 
     function executeCommand(command) {
         command = command.toLowerCase().trim();
@@ -211,27 +149,49 @@ CONTACT
 
         const commandsToAnimate = ['help', 'about', 'skills', 'experience', 'education', 'projects', 'contact', 'history', 'spinosaurus'];
 
-        if (commandsToAnimate.includes(actualCommand)) {
-            if (typeof response === 'string' && (response.includes('<') || response.includes('&'))) {
-                responseDiv.innerHTML = response;
-                terminal.scrollTop = terminal.scrollHeight;
+        if (commandsToAnimate.includes(actualCommand) || typeof commands[actualCommand] === 'undefined') {
+            if (typeof response === 'string') {
+                if (response.includes('<') || response.includes('&')) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = response;
+                    const textToType = tempDiv.textContent;
+                    
+                    type(textToType, responseDiv, () => {
+                        responseDiv.innerHTML = response;
+                        terminal.scrollTop = terminal.scrollHeight;
+                        ensureInputVisible();
+                    });
+                } else {
+                    type(response, responseDiv, () => {
+                        ensureInputVisible();
+                    });
+                }
             } else {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = response;
-                const textToType = tempDiv.textContent;
-
-                type(textToType, responseDiv, () => {
-                    responseDiv.innerHTML = response;
-                    terminal.scrollTop = terminal.scrollHeight;
-                });
+                responseDiv.innerHTML = response;
+                ensureInputVisible();
             }
         } else if (typeof response === 'string' && !response.includes('<') && !response.includes('&')) {
-            type(response, responseDiv);
+            type(response, responseDiv, () => {
+                ensureInputVisible();
+            });
         } else {
             responseDiv.innerHTML = response;
+            ensureInputVisible();
         }
 
-        terminal.scrollTop = terminal.scrollHeight;
+        // Ensure visibility immediately as well
+        ensureInputVisible();
+    }
+
+    // Function to ensure the input line is visible
+    function ensureInputVisible() {
+        // Small delay to ensure DOM updates are complete
+        setTimeout(() => {
+            const inputLine = document.querySelector('.input-line');
+            if (inputLine) {
+                inputLine.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
+        }, 100);
     }
 
     function autocomplete(input) {
@@ -274,8 +234,16 @@ CONTACT
             const welcomeDiv = document.createElement('div');
             welcomeDiv.classList.add('command-output');
             output.appendChild(welcomeDiv);
-            welcomeDiv.innerHTML = welcomeMessage;
-            terminal.scrollTop = terminal.scrollHeight;
+            
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = welcomeMessage;
+            const textToType = tempDiv.textContent;
+            
+            type(textToType, welcomeDiv, () => {
+                welcomeDiv.innerHTML = welcomeMessage;
+                terminal.scrollTop = terminal.scrollHeight;
+                ensureInputVisible();
+            });
         });
     }
 
@@ -321,7 +289,10 @@ CONTACT
             const projectId = e.target.getAttribute('data-project');
             openProjectModal(projectId);
         }
-        commandInput.focus();
+        // Only focus on non-mobile devices to prevent keyboard from appearing
+        if (!isMobile) {
+            commandInput.focus();
+        }
     });
 
     async function openProjectModal(projectId) {
