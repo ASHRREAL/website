@@ -77,14 +77,11 @@ Type or click <a href="#" class="command-link">help</a> to see available command
 
 
     const commands = {
-        help: async () => {
-            const count = await initVisitorCounter();
+        help: () => {
             const commandList = Object.keys(commands).filter(c => c !== 'spinosaurus').map(c => `  - <a href="#" class="command-link">${c}</a>: ${getCommandDescription(c)}`).join('\n');
             return `Available commands:
 -------
-${commandList}
-
-Visitor Count: ${count}`;
+${commandList}`;
         },
         about: () => `I like math and circuits :33`,
         skills: () => {
@@ -180,15 +177,16 @@ CONTACT
         element.innerHTML = '';
         let i = 0;
         
-        const baseSpeed = 5;
+        const baseSpeed = 10;
         const minSpeed = 1;
-        const maxLengthForBaseSpeed = 100;
         
         let speed = baseSpeed;
-        if (text.length > maxLengthForBaseSpeed) {
-            speed = Math.max(minSpeed, baseSpeed - Math.floor(text.length / 100));
+        if (text.length > 100) {
+            speed = minSpeed;
+        } else if (text.length > 50) {
+            speed = 5;
         }
-        
+
         const typing = setInterval(() => {
             if (i < text.length) {
                 if (text.charAt(i) === '\n') {
