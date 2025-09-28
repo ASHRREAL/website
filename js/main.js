@@ -88,19 +88,18 @@ ${commandList}`;
             return `
 SKILLS
 ------
-Programming Languages :  Java, C++, Python, JavaScript, HTML, CSS, C
+Languages             :  Java, Go, Python, TypeScript, JavaScript, C++, C, SQL,
+                          HTML, CSS
 
-Object-Oriented Prog. :  OOP principles, design patterns (MVC), inheritance, polymorphism
+Frameworks & Libraries:  Next.js, JavaFX, Discord API, ACRCloud API, aiohttp,
+                          CustomTkinter
 
-Dev Tools & Platforms :  Git, Linux, IntelliJ IDEA, VS Code,
-                          Browser Extension Dev, Raspberry Pi, Arduino
+Tools & Platforms     :  Git, Linux, VS Code, IntelliJ IDEA,
+                          Browser Extension Development, Raspberry Pi, Arduino,
+                          ESP32
 
-APIs & Libraries      :  Discord.py, ACRCloud API, aiohttp, aiofiles,
-                          CustomTkinter, Pillow
-
-Concepts              :  SDLC, Agile, API Integration, GUI Development,
-                          Data Structures & Algorithms, Cloud Storage,
-                          Embedded Systems`;
+Concepts              :  Object-Oriented Programming, Data Structures & Algorithms,
+                          API Integration, SDLC, Web & GUI Development`;
         },
         experience: () => `No technical experience outside my projects :(\n`,
         education: () => `University of Guelph - Computer Engineering (Expected Graduation: 2029)
