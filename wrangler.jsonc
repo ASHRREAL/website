@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "my-static-site",
+=======
+  "name": "ashrreal",
+>>>>>>> 7591251af23a9df501c458c22871cafe1c26887d
   "compatibility_date": "2025-09-28",
   "assets": {
     "directory": "./"
