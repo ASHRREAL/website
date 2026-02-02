@@ -175,14 +175,14 @@ CONTACT
         element.innerHTML = '';
         let i = 0;
         
-        const baseSpeed = 10;
-        const minSpeed = 1;
+        const baseSpeed = 5;
+        const minSpeed = 0;
         
         let speed = baseSpeed;
         if (text.length > 100) {
             speed = minSpeed;
         } else if (text.length > 50) {
-            speed = 5;
+            speed = 2;
         }
 
         const typing = setInterval(() => {
