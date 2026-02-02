@@ -103,14 +103,13 @@ Concepts              :  Object-Oriented Programming, Data Structures & Algorith
         },
         experience: () => `No technical experience outside my projects :(\n`,
         education: () => `University of Guelph - Computer Engineering (Expected Graduation: 2029)
-Relevant Coursework: Data Structures, Algorithms, Software Design, Computer Systems, Database Systems`,
+Relevant Coursework: Data Structures, Algorithms, Software Design, Computer Systems, Digital System Design, Computer Organization`,
         projects: () => {
             let projectList = 'My Projects:\n-------\n';
             Object.keys(projectsData).forEach(key => {
-                projectList += `  <div class="project-card" data-project="${key}">${projectsData[key].title}</div>\n`;
+                projectList += `  - <a href="#" class="project-card" data-project="${key}">${projectsData[key].title}</a>\n`;
             });
-            projectList += `
-For more, visit my <a href="https://github.com/ASHRREAL" target="_blank">GitHub</a>.`;
+            projectList += `\nFor more, visit my <a href="https://github.com/ASHRREAL" target="_blank">GitHub</a>.`;
             return projectList;
         },
         contact: `
